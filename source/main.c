@@ -33,14 +33,17 @@ int _main(struct thread *td) {
 
   initSysUtil();
 
+  char fw_version[6] = {0};
+  get_firmware_string(fw_version);
+  
   touch_file("/mnt/usb0/.probe");
   if (!file_exists("/mnt/usb0/.probe")) {
     touch_file("/mnt/usb1/.probe");
     if (!file_exists("/mnt/usb1/.probe")) {
       internal_backup();
-      printf_notification("Internal backup complete.\nThis was only a database backup, use a USB device for a full backup.");
+      printf_notification("Internal backup complete.\nThis was only a database backup, use a USB device for a full backup.\nPS4 Firmware %s", fw_version);
     } else {
-      printf_notification("Backing up to USB1");
+      printf_notification("Backing up to USB1\nPS4 Firmware %s", fw_version);
       unlink("/mnt/usb1/.probe");
       internal_backup();
       mkdir("/mnt/usb1/PS4/", 0777);
@@ -79,7 +82,7 @@ int _main(struct thread *td) {
       printf_notification("USB backup complete!");
     }
   } else {
-    printf_notification("Backing up to USB0");
+    printf_notification("Backing up to USB0\nPS4 Firmware %s", fw_version);
     unlink("/mnt/usb0/.probe");
     internal_backup();
     mkdir("/mnt/usb0/PS4/", 0777);
